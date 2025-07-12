@@ -1,7 +1,6 @@
 from fastapi import FastAPI, Path, Query
-from typing import Annotated
 
-from .routers import ml_model
+from routers import ml_model
 
 app = FastAPI()
 
