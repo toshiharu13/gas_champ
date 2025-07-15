@@ -1,1 +1,1 @@
-from .common import FirstModel
+from .sensors import FirstSensor

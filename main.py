@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Path, Query
 
-from routers import ml_model
+from routers import sensor
 
 app = FastAPI()
 
@@ -8,4 +8,4 @@ app = FastAPI()
 async def welcome() -> dict:
     return {"message": "Hello World"}
 
-app.include_router(ml_model.router)
+app.include_router(sensor.router)

@@ -5,11 +5,13 @@ from sqlalchemy.schema import CreateTable
 
 
 
-class FirstModel(Base):
-    __tablename__ = 'ml_monitor'
+class FirstSensor(Base):
+    __tablename__ = 'sensor'
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String)
     model = Column(String)
+    data = Column(String)
+    active = Column(Boolean, default=True)
 
-print(CreateTable(FirstModel.__table__))
+print(CreateTable(FirstSensor.__table__))
