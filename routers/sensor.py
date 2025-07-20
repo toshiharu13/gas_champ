@@ -7,7 +7,7 @@ from backend.db_depends import get_db
 from models import FirstSensor
 from sсhemas import CreateSensor
 
-router = APIRouter(prefix='/sensor', tags=['monotoring'])
+router = APIRouter(prefix='/sensor', tags=['Sensors'])
 
 
 @router.get('/all_sensors')
