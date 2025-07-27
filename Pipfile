@@ -9,6 +9,7 @@ uvicorn = {extras = ["standard"], version = "*"}
 sqlalchemy = "*"
 alembic = "*"
 pedantic = "*"
+python-multipart = "*"
 
 [dev-packages]
 
