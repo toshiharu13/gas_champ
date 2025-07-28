@@ -44,14 +44,14 @@ async def delete_sensor(db: Annotated[Session, Depends(get_db)], sensor_id: int)
         'transaction': 'Successful'
     }
 
-@router.put('/update/{sensor_id}')
+@router.patch('/update/{sensor_id}')
 async def update_sensor(db: Annotated[Session, Depends(get_db)], sensor_id: int, update_sensor: CreateSensor):
-    query = Update(FirstSensor).where(FirstSensor.id == sensor_id).values(
-        name=update_sensor.name,
-        model=update_sensor.model,
-        data=update_sensor.data
-    )
-    db.execute(query)
+    update_data = update_sensor.dict(exclude_unset=True)
+    query = select(FirstSensor).where(FirstSensor.id == sensor_id)
+    current_sensor = db.scalar(query)
+
+    for key, value in update_data.items():
+        setattr(current_sensor, key, value)
     db.commit()
     return {
         'status_code': status.HTTP_200_OK,
