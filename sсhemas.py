@@ -7,6 +7,9 @@ class CreateSensor(BaseModel):
     data: str = None
 
 class CreateDevice(BaseModel):
-    name: str
-    model: str
-    place: str
+    name: str = None
+    model: str = None
+    place: str = None
+
+class AddSensorsForDevice(BaseModel):
+    sensor_ids : list[int]

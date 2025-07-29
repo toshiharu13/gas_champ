@@ -4,8 +4,8 @@ from typing import Annotated
 from sqlalchemy import insert, select, update, Update, delete
 
 from backend.db_depends import get_db
-from models import Device
-from sсhemas import CreateDevice
+from models import Device, FirstSensor
+from sсhemas import CreateDevice, AddSensorsForDevice
 
 #from sсhemas import CreateDevice
 
@@ -53,14 +53,14 @@ async def delete_device(db: Annotated[Session, Depends(get_db)], divice_id: int)
         'transaction': 'Successful'
     }
 
-@router.put('/update/{divice_id}')
+@router.patch('/update/{divice_id}')
 async def update_device(db: Annotated[Session, Depends(get_db)], divice_id: int, update_device: CreateDevice):
-    query = Update(Device).where(Device.id == divice_id).values(
-        name=update_device.name,
-        model=update_device.model,
-        place=update_device.place,
-    )
-    db.execute(query)
+    update_data = update_device.dict(exclude_unset=True)
+    query = select(Device).where(Device.id == divice_id)
+    curent_device = db.scalar(query)
+
+    for key, value in update_data.items():
+        setattr(curent_device, key, value)
     db.commit()
     return {
         'status_code': status.HTTP_200_OK,
@@ -68,12 +68,14 @@ async def update_device(db: Annotated[Session, Depends(get_db)], divice_id: int,
     }
 
 @router.patch('/update_sensors/{divice_id}')
-async def update_device_sensors(db: Annotated[Session, Depends(get_db)], divice_id: int, update_device_sensors: list):
-    query = Update(Device).where(Device.id == divice_id).values(
-        sensors=update_device_sensors
-    )
-    db.execute(query)
+async def update_device_sensors(db: Annotated[Session, Depends(get_db)], device_id: int, update_device_sensors: AddSensorsForDevice):
+    for key, sensor_ids in update_device_sensors:
+        for sensor_id in sensor_ids:
+            query = select(FirstSensor).where(FirstSensor.id == sensor_id)
+            current_sensor = db.scalar(query)
+            current_sensor.device_id = device_id
     db.commit()
+
     return {
         'status_code': status.HTTP_200_OK,
         'transaction': 'Successful'
