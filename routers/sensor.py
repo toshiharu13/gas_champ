@@ -6,6 +6,7 @@ from sqlalchemy import insert, select, update, Update, delete
 from backend.db_depends import get_db
 from models import FirstSensor
 from sсhemas import CreateSensor
+from  func_utils import normalize_income_sensor_data
 
 router = APIRouter(prefix='/sensor', tags=['Sensors'])
 
@@ -78,6 +79,19 @@ async def turn_on_sensor(db: Annotated[Session, Depends(get_db)],sensor_id: int)
     )
     db.execute(query)
     db.commit()
+    return {
+        'status_code': status.HTTP_200_OK,
+        'transaction': 'Successful'
+    }
+
+@router.post('/add_sensors_data/{sensor_id}')
+async def add_sensors_data(db: Annotated[Session, Depends(get_db)], sensor_id: int, sensor_data: str):
+    normalize_data = normalize_income_sensor_data(sensor_data)
+    query = select(FirstSensor).where(FirstSensor.id == sensor_id)
+    curent_sensor = db.scalar(query)
+    curent_sensor.data += normalize_data
+    db.commit()
+
     return {
         'status_code': status.HTTP_200_OK,
         'transaction': 'Successful'

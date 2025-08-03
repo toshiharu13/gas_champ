@@ -67,7 +67,7 @@ async def update_device(db: Annotated[Session, Depends(get_db)], divice_id: int,
         'transaction': 'Successful'
     }
 
-@router.patch('/update_sensors/{divice_id}')
+@router.patch('/update_sensors/{device_id}')
 async def update_device_sensors(db: Annotated[Session, Depends(get_db)], device_id: int, update_device_sensors: AddSensorsForDevice):
     for key, sensor_ids in update_device_sensors:
         for sensor_id in sensor_ids:
@@ -80,3 +80,12 @@ async def update_device_sensors(db: Annotated[Session, Depends(get_db)], device_
         'status_code': status.HTTP_200_OK,
         'transaction': 'Successful'
     }
+
+@router.get('device_sensors_data/{divice_id}')
+async  def device_sensors_data(db: Annotated[Session, Depends(get_db)], device_id: int):
+    normalized_sensors_data = {}
+    query = select(Device).where(Device.id == device_id)
+    curent_device = db.scalar(query)
+    for device_sensor in curent_device.sensors:
+        normalized_sensors_data[device_sensor.name] = device_sensor.data
+    return normalized_sensors_data
